@@ -19,7 +19,5 @@ public interface SiteRepository extends CrudRepository<Site, Integer> {
 
     Site findById(Long id);
 
-    @Async
-    CompletableFuture<Site> findByName(String name);
-
+    Site findByName(String name);
 }

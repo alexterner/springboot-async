@@ -9,15 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @Service
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
 public class SiteService {
 
     private final Logger log = LoggerFactory.getLogger(SiteService.class);
@@ -27,9 +30,21 @@ public class SiteService {
 
 
     @Async
+    public Future<String> process() throws InterruptedException {
+        log.info("###Start Processing with Thread id: " + Thread.currentThread().getId());
+
+        // Sleep 3s for simulating the processing
+        Thread.sleep(3000);
+
+        String processInfo = String.format("Processing is Done with Thread id= %d", Thread.currentThread().getId());
+        return new AsyncResult<>(processInfo);
+    }
+
+    @Async
     @Transactional(readOnly = true)
-    public CompletableFuture<Site> findSite(String  name) throws ExecutionException, InterruptedException {
-        return siteRepository.findByName( name );
+    public CompletableFuture <Site> findSite(String  name) throws ExecutionException, InterruptedException {
+        log.info("### Start Processing with Thread id: " + Thread.currentThread().getId());
+        return CompletableFuture.supplyAsync ( () -> siteRepository.findByName( name ) );
     }
 
     @Transactional(readOnly = true)
